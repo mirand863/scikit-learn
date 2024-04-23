@@ -35,11 +35,11 @@ case.
 
 import array
 import itertools
-import warnings
-from numbers import Integral, Real
-
 import numpy as np
 import scipy.sparse as sp
+import warnings
+from copy import deepcopy
+from numbers import Integral, Real
 
 from .base import (
     BaseEstimator,
@@ -92,7 +92,7 @@ def _fit_binary(estimator, X, y, fit_params, classes=None):
             )
         estimator = _ConstantPredictor().fit(X, unique_y)
     else:
-        estimator = clone(estimator)
+        estimator = deepcopy(estimator)
         estimator.fit(X, y, **fit_params)
     return estimator
 
@@ -441,7 +441,7 @@ class OneVsRestClassifier(
         )
 
         if _check_partial_fit_first_call(self, classes):
-            self.estimators_ = [clone(self.estimator) for _ in range(self.n_classes_)]
+            self.estimators_ = [deepcopy(self.estimator) for _ in range(self.n_classes_)]
 
             # A sparse LabelBinarizer, with sparse_output=True, has been
             # shown to outperform or match a dense label binarizer in all
@@ -879,7 +879,7 @@ class OneVsOneClassifier(MetaEstimatorMixin, ClassifierMixin, BaseEstimator):
         first_call = _check_partial_fit_first_call(self, classes)
         if first_call:
             self.estimators_ = [
-                clone(self.estimator)
+                deepcopy(self.estimator)
                 for _ in range(self.n_classes_ * (self.n_classes_ - 1) // 2)
             ]
 
